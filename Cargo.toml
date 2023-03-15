@@ -1,0 +1,15 @@
+[package]
+name = "wifu"
+version = "0.1.0"
+edition = "2021"
+description = "Fish inspired command line function manager"
+repository = "https://github.com/nrdrch/"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+termcolor = "1.2.0"
+bat = "0.22.1"
+ini = "1.3.0"
+ansi_term = "0.12.1"
+fs = "0.0.5"
+chrono = "0.4.24"
