@@ -71,9 +71,8 @@ fn main() {
             
                         writeln!(
                             stream,
-                            "{}Function '{}' with args '{}' successfully saved",
-                            ansi_term::Color::White.bold().paint("[SUCCESS] "),
-                            name, args
+                            "\u{001b}[32m[SUCCESS]\u{001b}[0m Function '{}' successfully saved",
+                            name
                         )
                         .unwrap();
                     }
