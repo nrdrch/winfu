@@ -3,9 +3,9 @@ name = "wifu"
 version = "0.1.0"
 edition = "2021"
 description = "Fish inspired command line function manager"
-repository = "https://github.com/nrdrch/"
+repository = "https://github.com/nrdrch/wifu"
 license = "MIT OR Apache-2.0"
-
+categories = ["command-line-utilities"]
 [dependencies]
 termcolor = "1.2.0"
 bat = "0.22.1"
