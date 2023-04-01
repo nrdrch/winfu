@@ -1,6 +1,6 @@
 ## wifu
-Fish Inspired Commandline Function Manager For Windows
-
+Fish Inspired Commandline Function Manager For Windows!
+Type less amd get superior functionality. 
 
 cargo & rust: https://doc.rust-lang.org/cargo/getting-started/installation.html
 Installation(for now):
