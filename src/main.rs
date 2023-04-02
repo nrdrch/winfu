@@ -26,8 +26,49 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
+fn count_functions_lines_and_chars(filepath: &str) -> (usize, usize, usize) {
+    let file = File::open(filepath).expect("Failed to open file");
 
+    let mut function_count = 0;
+    let mut line_count = 0;
+    let mut char_count = 0;
+    let mut inside_function = false;
+
+    for line in BufReader::new(file).lines() {
+        if let Ok(l) = line {
+            let trimmed_line = l.trim();
+            if trimmed_line.starts_with("function ") {
+                if inside_function {
+                    // We're already inside a function, so we count the previous function
+                    function_count += 1;
+                } else {
+                    // We're starting a new function
+                    inside_function = true;
+                }
+            } else if trimmed_line.is_empty() {
+                // We're outside a function
+                inside_function = false;
+            }
+            if inside_function {
+                line_count += 1;
+                char_count += l.chars().count() + 1; // Add 1 to account for the newline character
+            }
+        }
+    }
+
+    // If we're still inside a function when we reach the end of the file, we count it
+    if inside_function {
+        function_count += 1;
+    }
+
+    (function_count, line_count, char_count)
+}
 fn main() {
+    //let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
+    //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
+    //let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
+    //println!("{} contains {} functions, {} lines, and {} characters in total.", mods_file_path, function_count, line_count, char_count);
+    
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
@@ -211,7 +252,13 @@ fn main() {
     }
 }
 
+
+
 fn print_usage(stream: &mut StandardStream) {
+    let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
+    let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
+    let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
+
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -368,7 +415,11 @@ fn print_usage(stream: &mut StandardStream) {
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Yellow)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    //writeln!(stream, "{}", "").unwrap();
+    writeln!(stream, "{}", "").unwrap();
     
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(243))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    println!("      {} functions, {} lines, and {} characters", function_count, line_count, char_count);
 
 }
