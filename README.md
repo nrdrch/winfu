@@ -1,5 +1,7 @@
 ## wifu - Commandline Function Manager For Windows! 
 Type less and get superior functionality. 
+![Example](https://github.com/jds4nrdrch/pics/blob/main/example.png)
+
 #### Get Started Now!
 1. Download the newest [release](https://github.com/nrdrch/wifu/releases/) 
 2. Preferably move the executable into a **directory you created**, that is in your **'Path'** system enviorment variable for easy execution. 
@@ -23,5 +25,4 @@ Compile it yourself using the method below.
 4. Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
 
 
-## Usage & Features
-![Example](https://github.com/jds4nrdrch/pics/blob/main/example.png)
+
