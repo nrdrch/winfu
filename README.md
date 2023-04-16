@@ -1,5 +1,5 @@
 ## wifu - Commandline Function Manager For Windows! 
-Type less and get superior functionality. 
+#### Type less and get superior functionality. 
 ![Example](https://github.com/jds4nrdrch/pics/blob/main/example2.png)
 
 #### Get Started Now!
