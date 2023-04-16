@@ -1,6 +1,6 @@
 ## wifu - Commandline Function Manager For Windows! 
 Type less and get superior functionality. 
-![Example](https://github.com/jds4nrdrch/pics/blob/main/example.png)
+![Example](https://github.com/jds4nrdrch/pics/blob/main/example2.png)
 
 #### Get Started Now!
 1. Download the newest [release](https://github.com/nrdrch/wifu/releases/) 
