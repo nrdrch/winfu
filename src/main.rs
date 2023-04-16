@@ -3,14 +3,12 @@ use std::fs::{OpenOptions};
 use std::io::{Write};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter};
-
 use std::process::Command;
 extern crate termcolor;
 extern crate bat;
 extern crate chrono;
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-
 fn create_file_if_not_exists() -> std::io::Result<()> {
     let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
     let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
@@ -55,12 +53,10 @@ fn count_functions_lines_and_chars(filepath: &str) -> (usize, usize, usize) {
             }
         }
     }
-
     // If we're still inside a function when we reach the end of the file, we count it
     if inside_function {
         function_count += 1;
     }
-
     (function_count, line_count, char_count)
 }
 fn main() {
@@ -68,7 +64,6 @@ fn main() {
     //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
     //let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
     //println!("{} contains {} functions, {} lines, and {} characters in total.", mods_file_path, function_count, line_count, char_count);
-    
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
@@ -76,7 +71,6 @@ fn main() {
         print_usage(&mut stream);
     } else {
         match args[1].as_str() {
-            
             "sv" => {
                 let mut fn_name = None;
                 let mut fn_args = None;
@@ -109,7 +103,6 @@ fn main() {
                                 args = args.replacen("{", "{\n    $CustomInput ", 1);
                             }
                         }
-            
                         let user_profile = env::var("USERPROFILE").unwrap();
                         let file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
                         let file_content = read_to_string(&file_path).unwrap_or_default();
@@ -124,7 +117,6 @@ fn main() {
                             .unwrap();
                             return;
                         }
-            
                         let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
             
                         let function = format!("function {} {{\n    {}{}\n}}\n", name, args, if has_param {" "} else {""});
@@ -141,14 +133,6 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
-            
-            
-            
-            
-            
-            
-
-
             "rm" => {
                 let fn_name = args.get(2);
                 let mods_file_path = std::env::var("USERPROFILE")
@@ -418,7 +402,7 @@ fn print_usage(stream: &mut StandardStream) {
     writeln!(stream, "{}", "").unwrap();
     
     let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(243))).set_bold(true);
+    cs.set_fg(Some(Color::Ansi256(243 ))).set_bold(true);
     stream.set_color(&cs).unwrap();
     println!("      {} functions, {} lines, and {} characters", function_count, line_count, char_count);
 
