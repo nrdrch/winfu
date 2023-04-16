@@ -39,5 +39,5 @@ wifu ls
 ```
 - If your arguments contain a Path with whitespaces for example, format like this:
 ```
-wifu sv MoveToPath "cd 'C:\Path With\White Spaces\'"
+wifu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
 ```
