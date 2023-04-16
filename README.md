@@ -2,7 +2,7 @@
 Type less and get superior functionality. 
 #### Get Started Now!
 1. Download the newest [release](https://github.com/nrdrch/wifu/releases/) 
-2. Preferably move the executable into a **directory you created**, that is in your **"Path"** system enviorment variable for easy execution. 
+2. Preferably move the executable into a **directory you created**, that is in your **'Path'** system enviorment variable for easy execution. 
 #### Don't know how to add a directory to your 'Path' system variable?
 1. Press **Win+R** on your Keyboard and enter this to open the Advanced System Propersties 
 ```
@@ -20,4 +20,4 @@ Compile it yourself using the method below.
 1. git clone https://github.com/nrdrch/wifu.git
 2. cd wifu
 3. cargo build --release
-4. Preferably move the executable from target/release into a directory in your "Path" enviorment variable for easy execution.
+4. Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
