@@ -1,23 +1,28 @@
-## wifu - Commandline Function Manager For Windows! 
+## winfu - Commandline Function Manager For Windows! 
 #### Type less and get superior functionality. 
 ![Example](https://github.com/jds4nrdrch/pics/blob/main/example2.png)
 
-#### Potential Dependencies:
+### Potential Dependencies:
 - [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [Git for Windows](https://gitforwindows.org/)
-#### Installation:
+### Installation:
+- Normal Method
 ```
-git clone https://github.com/nrdrch/wifu.git
+cargo install winfu
+```
+- Alternative Method
+```
+git clone https://github.com/nrdrch/winfu.git
 ```
 ```
-cd wifu
+cd winfu
 ```
 ```
 cargo build --release
 ```
 - Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
 
-#### Don't know how to add a directory to your 'Path' system variable?
+### Don't know how to add a directory to your 'Path' system variable?
 1. Press **Win+R** on your Keyboard and enter this to open the Advanced System Propersties 
 ```
 C:\Windows\System32\SystemPropertiesAdvanced.exe
@@ -28,20 +33,20 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 
 
 
-#### Usage Examples:
+### Usage Examples:
 - Save a function called 'hi' that will echo 'hello world'
 ```
-wifu sv hi "echo hello world"
+winfu sv hi "echo hello world"
 ```
 - Remove the function called 'hi'
 ```
-wifu rm hi
+winfu rm hi
 ```
 - List all your created functions
 ```
-wifu ls
+winfu ls
 ```
 - If your arguments contain a Path with whitespaces for example, format like this:
 ```
-wifu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
+winfu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
 ```
