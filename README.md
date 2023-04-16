@@ -8,7 +8,7 @@ Type less and get superior functionality.
 ```
 C:\Windows\System32\SystemPropertiesAdvanced.exe
 ```
-2. Click **Enviorment Variables** at the bottom right.
+2. Click **Enviorment Variables** at the bottom.
 3. In the **System variables** box, search for the variable **'Path'**, click on it to mark it and hit **Edit**
 4. To add a directory now, click **New** and enter the **full path** to your executables directory.
 ### OR
@@ -21,3 +21,7 @@ Compile it yourself using the method below.
 2. cd wifu
 3. cargo build --release
 4. Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
+
+
+## Usage & Features
+![Example](https://github.com/jds4nrdrch/pics/blob/main/example.png)
