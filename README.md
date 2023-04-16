@@ -24,5 +24,20 @@ Compile it yourself using the method below.
 3. cargo build --release
 4. Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
 
-
-
+#### Usage Examples:
+- Save a function called 'hi' that will echo 'hello world'
+```
+wifu sv hi "echo hello world"
+```
+- Remove the function called 'hi'
+```
+wifu rm hi
+```
+- List all your created functions
+```
+wifu ls
+```
+- If your arguments contain a Path with whitespaces format like this:
+```
+wifu sv MoveToPath "cd 'C:\Path With\White Spaces\'"
+```
