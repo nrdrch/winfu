@@ -1,5 +1,5 @@
 [package]
-name = "wifu"
+name = "winfu"
 version = "0.1.0"
 edition = "2021"
 description = "Fish inspired command line function manager"
