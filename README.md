@@ -6,10 +6,16 @@
 - [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [Git for Windows](https://gitforwindows.org/)
 #### Installation:
-1. git clone https://github.com/nrdrch/wifu.git
-2. cd wifu
-3. cargo build --release
-4. Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
+```
+git clone https://github.com/nrdrch/wifu.git
+```
+```
+cd wifu
+```
+```
+cargo build --release
+```
+- Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
 
 #### Don't know how to add a directory to your 'Path' system variable?
 1. Press **Win+R** on your Keyboard and enter this to open the Advanced System Propersties 
