@@ -37,7 +37,7 @@ wifu rm hi
 ```
 wifu ls
 ```
-- If your arguments contain a Path with whitespaces format like this:
+- If your arguments contain a Path with whitespaces for example, format like this:
 ```
 wifu sv MoveToPath "cd 'C:\Path With\White Spaces\'"
 ```
