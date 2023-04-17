@@ -1,8 +1,8 @@
 [package]
 name = "winfu"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
-description = "Fish inspired command line function manager"
+description = "Commandline Function Manager For Windows"
 repository = "https://github.com/nrdrch/wifu"
 license = "MIT OR Apache-2.0"
 categories = ["command-line-utilities"]
