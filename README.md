@@ -1,7 +1,7 @@
 ## winfu - Commandline Function Manager For Windows! 
 #### Type less and get superior functionality. 
 ![Example](https://github.com/jds4nrdrch/pics/blob/main/image.png)
-
+TEST
 ### Potential Dependencies:
 - [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [Git for Windows](https://gitforwindows.org/)
