@@ -432,11 +432,6 @@ fn print_usage(stream: &mut StandardStream) {
     stream.set_color(&cs).unwrap();
     writeln!(stream, " <name> <args>").unwrap();
     stream.reset().unwrap();
-
-    //let mut cs = ColorSpec::new();
-    //cs.set_fg(Some(Color::White)).set_bold(true);
-    //stream.set_color(&cs).unwrap();
-    //writeln!(stream, "                      add a string input parameter with \n").unwrap();
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(38))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -456,7 +451,6 @@ fn print_usage(stream: &mut StandardStream) {
     cs.set_fg(Some(Color::Ansi256(231))).set_bold(true);
     stream.set_color(&cs).unwrap();
     writeln!(stream, "= add a string parameter").unwrap();
-    println!("");
 
 
     
@@ -517,10 +511,10 @@ fn print_usage(stream: &mut StandardStream) {
     stream.reset().unwrap();
 
     let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Yellow)).set_bold(true);
+    cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "").unwrap();
-
+    writeln!(stream, "{}", "    ").unwrap();
+    writeln!(stream, "{}", "                                            _<").unwrap();
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
