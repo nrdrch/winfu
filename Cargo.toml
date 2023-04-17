@@ -6,6 +6,8 @@ description = "Commandline Function Manager For Windows"
 repository = "https://github.com/nrdrch/winfu"
 license = "MIT OR Apache-2.0"
 categories = ["command-line-utilities"]
+[build-dependencies]
+build = "0.1.0"
 [dependencies]
 termcolor = "1.2.0"
 bat = "0.23.0"
