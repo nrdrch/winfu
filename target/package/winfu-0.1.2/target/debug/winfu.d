@@ -1,0 +1,1 @@
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\winfu.exe: C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\src\main.rs

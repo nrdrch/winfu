@@ -1,0 +1,9 @@
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\encoding_index_simpchinese-cbb01745524a3208.rmeta: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030_ranges.rs
+
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\libencoding_index_simpchinese-cbb01745524a3208.rlib: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030_ranges.rs
+
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\encoding_index_simpchinese-cbb01745524a3208.d: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030_ranges.rs
+
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\lib.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\encoding-index-simpchinese-1.20141219.5\gb18030_ranges.rs:

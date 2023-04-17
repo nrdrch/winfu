@@ -1,0 +1,11 @@
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\yaml_rust-0b4a0c74735c12d9.rmeta: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\emitter.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\parser.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\scanner.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\yaml.rs
+
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\libyaml_rust-0b4a0c74735c12d9.rlib: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\emitter.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\parser.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\scanner.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\yaml.rs
+
+C:\Users\nrdrch\Documents\CodeStuff\rustdev\GitHub\winfu\target\package\winfu-0.1.2\target\debug\deps\yaml_rust-0b4a0c74735c12d9.d: C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\lib.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\emitter.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\parser.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\scanner.rs C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\yaml.rs
+
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\lib.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\emitter.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\parser.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\scanner.rs:
+C:\Users\nrdrch\.cargo\registry\src\github.com-1ecc6299db9ec823\yaml-rust-0.4.5\src\yaml.rs:
