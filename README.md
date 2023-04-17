@@ -6,7 +6,7 @@
 - [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [Git for Windows](https://gitforwindows.org/)
 ### Installation:
-- Normal Method
+- Recommended Method
 ```
 cargo install winfu
 ```
