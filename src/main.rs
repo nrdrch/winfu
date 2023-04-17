@@ -1,12 +1,14 @@
 use std::env;
 use std::fs::{OpenOptions};
 use std::io::{Write};
-use std::fs::{self, File};
+use regex::Regex;
+use std::fs::{self, File, write};
 use std::io::{BufRead, BufReader, BufWriter};
 use std::process::Command;
 extern crate termcolor;
 extern crate bat;
 extern crate chrono;
+
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 fn create_file_if_not_exists() -> std::io::Result<()> {
@@ -24,41 +26,18 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-fn count_functions_lines_and_chars(filepath: &str) -> (usize, usize, usize) {
-    let file = File::open(filepath).expect("Failed to open file");
-
-    let mut function_count = 0;
-    let mut line_count = 0;
-    let mut char_count = 0;
-    let mut inside_function = false;
-
-    for line in BufReader::new(file).lines() {
-        if let Ok(l) = line {
-            let trimmed_line = l.trim();
-            if trimmed_line.starts_with("function ") {
-                if inside_function {
-                    // We're already inside a function, so we count the previous function
-                    function_count += 1;
-                } else {
-                    // We're starting a new function
-                    inside_function = true;
-                }
-            } else if trimmed_line.is_empty() {
-                // We're outside a function
-                inside_function = false;
-            }
-            if inside_function {
-                line_count += 1;
-                char_count += l.chars().count() + 1; // Add 1 to account for the newline character
-            }
-        }
-    }
-    // If we're still inside a function when we reach the end of the file, we count it
-    if inside_function {
-        function_count += 1;
-    }
-    (function_count, line_count, char_count)
-}
+// fn append_to_profile(variable_name: &str, variable_value: &str) -> Result<(), std::io::Error> {
+//     let user_profile = env::var("USERPROFILE").unwrap();
+//     let file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
+// 
+//     let variable_declaration = format!("${} = \"{}\"\n", variable_name, variable_value);
+// 
+//     let mut file = OpenOptions::new().append(true).open(&file_path)?;
+//     file.write_all(variable_declaration.as_bytes())?;
+// 
+//     Ok(())
+// }
+// 
 fn main() {
     //let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
     //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
@@ -92,7 +71,7 @@ fn main() {
                         }
                     }
                 }
-            
+                
                 match (fn_name, fn_args) {
                     (Some(name), Some(mut args)) => {
                         if has_param {
@@ -212,8 +191,159 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
-                     
+            "svp" => {
+                let mut var_name = None;
+                let mut var_value = None;
             
+                // Parse command-line arguments
+                for i in 2..args.len() {
+                    match args[i].as_str() {
+                        arg => {
+                            if var_name.is_none() {
+                                var_name = Some(arg.to_owned());
+                            } else {
+                                var_value = Some(arg.to_owned());
+                                break;
+                            }
+                        }
+                    }
+                }
+                match (var_name, var_value) {
+                    (Some(name), Some(value)) => {
+                        let user_profile = env::var("USERPROFILE").unwrap();
+                        let file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
+                        let file_content = read_to_string(&file_path).unwrap_or_default();
+            
+                        if file_content.contains(&format!("${} =", name)) {
+                            writeln!(
+                                stream,
+                                "{}Variable '{}' already exists",
+                                ansi_term::Color::Red.bold().paint("[ERROR] "),
+                                name
+                            )
+                            .unwrap();
+                            return;
+                        }
+            
+                        let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
+                        // let variable = format!("${} =  {}\n", name, value);
+                        let variable = format!("${} =  '{}'\n", name, value.replace("'", "''").replace('"', r#"""""#));
+                        file.write_all(variable.as_bytes()).unwrap();
+            
+                        writeln!(
+                            stream,
+                            "\u{001b}[32m[SUCCESS]\u{001b}[0m Variable '{}' successfully saved",
+                            name
+                        )
+                        .unwrap();
+                    }
+                    _ => print_usage(&mut stream),
+                }
+            }
+            "rmp" => {
+                if args.len() < 3 {
+                    print_usage(&mut stream);
+                    return;
+                }
+            
+                let var_name = args[2].as_str();
+                let user_profile = env::var("USERPROFILE").unwrap();
+                let file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
+                let mut file_content = read_to_string(&file_path).unwrap_or_default();
+            
+                let variable_regex = Regex::new(&format!(r"(?m)^\${}\s*=\s*.+[\r\n]*", var_name)).unwrap();
+                if !variable_regex.is_match(&file_content) {
+                    writeln!(
+                        stream,
+                        "{}Variable '{}' not found",
+                        ansi_term::Color::Red.bold().paint("[ERROR] "),
+                        var_name
+                    ).unwrap();
+                    return;
+                }
+            
+                file_content = variable_regex.replace_all(&file_content, "").to_string();
+                write(&file_path, file_content.as_bytes()).unwrap();
+            
+                writeln!(
+                    stream,
+                    "\u{001b}[32m[SUCCESS]\u{001b}[0m Variable '{}' successfully deleted",
+                    var_name
+                ).unwrap();
+            }
+            
+            "lsp" => {
+                let user_profile = env::var("USERPROFILE").unwrap();
+                let profile_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
+                let vars_file_path = env::temp_dir().join("psvars.ps1");
+            
+                // Remove the temporary file if it exists
+                if vars_file_path.exists() {
+                    match std::fs::remove_file(&vars_file_path) {
+                        Ok(_) => {}
+                        Err(err) => {
+                            writeln!(
+                                stream,
+                                "{}Failed to remove temporary file: {}",
+                                ansi_term::Color::Red.bold().paint("[ERROR] "),
+                                err
+                            ).unwrap();
+                            return;
+                        }
+                    }
+                }
+            
+                // Read the PowerShell profile file
+                let profile_content = match read_to_string(&profile_path) {
+                    Ok(content) => content,
+                    Err(err) => {
+                        writeln!(
+                            stream,
+                            "{}Failed to read PowerShell profile file: {}",
+                            ansi_term::Color::Red.bold().paint("[ERROR] "),
+                            err
+                        ).unwrap();
+                        return;
+                    }
+                };
+            
+                // Extract the variable declarations from the PowerShell profile file
+                let var_regex = Regex::new(r"(?m)^\$([a-zA-Z0-9_]+)\s*=\s*'?(.*?)'?\s*$").unwrap();
+                let mut vars = String::new();
+                for capture in var_regex.captures_iter(&profile_content) {
+                    let name = &capture[1];
+                    let value = &capture[2];
+                    vars.push_str(&format!("${} = '{}'\n", name, value.replace("'", "''").replace('"', r#"""""#)));
+                }
+            
+                // Write the variable declarations to the temporary file
+                match write(&vars_file_path, vars.as_bytes()) {
+                    Ok(_) => {
+                        // Use bat to get the content of the temporary file
+                        let bat_output = Command::new("bat")
+                            .arg("--style=numbers,changes")
+                            .arg("--color=always")
+                            .arg(&vars_file_path)
+                            .output()
+                            .unwrap();
+            
+                        // Write the bat output to the output stream
+                        writeln!(
+                            stream,
+                            "{}",
+                            String::from_utf8_lossy(&bat_output.stdout)
+                        ).unwrap();
+                    }
+                    Err(err) => {
+                        writeln!(
+                            stream,
+                            "{}Failed to write PowerShell variables file: {}",
+                            ansi_term::Color::Red.bold().paint("[ERROR] "),
+                            err
+                        ).unwrap();
+                    }
+                };
+            }
             "ls" => {
                 let mods_file_path = std::env::var("USERPROFILE")
                     .unwrap()
@@ -235,14 +365,9 @@ fn main() {
         }
     }
 }
-
-
-
 fn print_usage(stream: &mut StandardStream) {
-    let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
-    let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
-
+    // let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
+    // let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -292,10 +417,13 @@ fn print_usage(stream: &mut StandardStream) {
     stream.reset().unwrap();
 
 
+
+
+
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    write!(stream, "              wifu").unwrap();
+    write!(stream, "              winfu").unwrap();
     stream.reset().unwrap();
 
     let mut cs = ColorSpec::new();
@@ -339,9 +467,11 @@ fn print_usage(stream: &mut StandardStream) {
     cs.set_fg(Some(Color::Ansi256(231))).set_bold(true);
     stream.set_color(&cs).unwrap();
     writeln!(stream, "= add a string parameter").unwrap();
-
-    stream.reset().unwrap();
     println!("");
+
+
+    
+    stream.reset().unwrap();
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -357,7 +487,7 @@ fn print_usage(stream: &mut StandardStream) {
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    write!(stream, "              wifu").unwrap();
+    write!(stream, "              winfu").unwrap();
     stream.reset().unwrap();
 
     let mut cs = ColorSpec::new();
@@ -372,6 +502,7 @@ fn print_usage(stream: &mut StandardStream) {
     writeln!(stream, "{}", "<name>").unwrap();
     stream.reset().unwrap();
     println!("");
+
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -387,7 +518,7 @@ fn print_usage(stream: &mut StandardStream) {
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    write!(stream, "              wifu").unwrap();
+    write!(stream, "              winfu").unwrap();
     stream.reset().unwrap();
 
     let mut cs = ColorSpec::new();
@@ -400,10 +531,96 @@ fn print_usage(stream: &mut StandardStream) {
     cs.set_fg(Some(Color::Yellow)).set_bold(true);
     stream.set_color(&cs).unwrap();
     writeln!(stream, "{}", "").unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "{}", "      svp ").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, "= save a new PowerShell variable").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "              winfu").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, " svp").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, " <name> <args>").unwrap();
+    stream.reset().unwrap();
+
+    println!("");
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "{}", "      rmp ").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, "= remove an existing PowerShell variable").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "              winfu").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, " rmp").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, " <name>").unwrap();
+    stream.reset().unwrap();
+    println!("");
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "      lsp").unwrap();
     
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, " = list all PowerShell variables").unwrap();
+    
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::White)).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    write!(stream, "              winfu").unwrap();
+    stream.reset().unwrap();
+
+    let mut cs = ColorSpec::new();
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+    stream.set_color(&cs).unwrap();
+    writeln!(stream, " lsp").unwrap();
+    stream.reset().unwrap();
+
+
+
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(243 ))).set_bold(true);
     stream.set_color(&cs).unwrap();
-    println!("      {} functions, {} lines, and {} characters", function_count, line_count, char_count);
+    
 
 }
