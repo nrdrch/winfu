@@ -610,6 +610,4 @@ fn print_usage(stream: &mut StandardStream) {
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(243 ))).set_bold(true);
     stream.set_color(&cs).unwrap();
-    
-
 }
