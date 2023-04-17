@@ -26,18 +26,7 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-// fn append_to_profile(variable_name: &str, variable_value: &str) -> Result<(), std::io::Error> {
-//     let user_profile = env::var("USERPROFILE").unwrap();
-//     let file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
-// 
-//     let variable_declaration = format!("${} = \"{}\"\n", variable_name, variable_value);
-// 
-//     let mut file = OpenOptions::new().append(true).open(&file_path)?;
-//     file.write_all(variable_declaration.as_bytes())?;
-// 
-//     Ok(())
-// }
-// 
+
 fn main() {
     //let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
     //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
