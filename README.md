@@ -34,11 +34,11 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 
 
 ### Usage Examples:
-- Save a function called 'hi' that will echo 'hello world'
+- Save a function called "hi" that will echo "hello world"
 ```
 winfu sv hi "echo hello world"
 ```
-- Remove the function called 'hi'
+- Remove the function called "hi"
 ```
 winfu rm hi
 ```
@@ -49,4 +49,17 @@ winfu ls
 - If your arguments contain a Path with whitespaces for example, format like this:
 ```
 winfu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
+```
+---------
+- Save a variable called docs with the path to documents
+```
+winfu svp docs "C:\Users\Username\Documents\"
+```
+- Delete the variable called "docs" 
+```
+winfu rmp docs
+``` 
+- List all variables
+```
+winfu lsp
 ```
