@@ -26,12 +26,7 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-
 fn main() {
-    //let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
-    //let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
-    //println!("{} contains {} functions, {} lines, and {} characters in total.", mods_file_path, function_count, line_count, char_count);
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
@@ -60,7 +55,6 @@ fn main() {
                         }
                     }
                 }
-                
                 match (fn_name, fn_args) {
                     (Some(name), Some(mut args)) => {
                         if has_param {
@@ -355,8 +349,6 @@ fn main() {
     }
 }
 fn print_usage(stream: &mut StandardStream) {
-    // let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    // let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
