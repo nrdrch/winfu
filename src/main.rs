@@ -35,6 +35,29 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
+    let output = Command::new("bat")
+        .arg("--version")
+        .output()
+        .ok();
+
+    if output.is_none() {
+        println!("'bat' is not installed. Installing...");
+        let status = Command::new("cargo")
+            .args(&["install", "bat"])
+            .status();
+
+        match status {
+            Ok(status) => {
+                if !status.success() {
+                    eprintln!("Failed to install 'bat'");
+                }
+            }
+            Err(e) => eprintln!("Failed to run cargo: {}", e),
+        }
+    } else {
+        println!("'bat' is already installed.");
+    }
+
     if args.len() == 1 {
         print_usage(&mut stream);
     } else {
