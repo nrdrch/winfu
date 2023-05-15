@@ -5,11 +5,8 @@ use regex::Regex;
 use std::fs::{self, File, write};
 use std::io::{BufRead, BufReader, BufWriter};
 use std::process::Command;
-extern crate termcolor;
-extern crate bat;
-extern crate chrono;
-use clipboard::ClipboardProvider;
-use clipboard::ClipboardContext;
+//use clipboard::ClipboardProvider;
+//use clipboard::ClipboardContext;
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 fn create_file_if_not_exists() -> std::io::Result<()> {
@@ -27,10 +24,7 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-fn get_clipboard_contents() -> String {
-    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-    ctx.get_contents().unwrap_or_default()
-}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
@@ -63,25 +57,8 @@ fn main() {
             "sv" => {
                 let mut fn_name = None;
                 let mut fn_args = None;
-                let mut has_param = false;
-                let mut has_clipboard = false;
-                
-                // Parse command-line arguments
                 for i in 2..args.len() {
                     match args[i].as_str() {
-                        "-p" | "-param" => {
-                            if i + 1 < args.len() {
-                                has_param = true;
-                                fn_args = Some(args[i+1].to_owned());
-                            } else {
-                                print_usage(&mut stream);
-                                return;
-                            }
-                        }
-                        "-c" | "-clip" => {
-                            has_clipboard = true;
-                            fn_args = Some(get_clipboard_contents());
-                        }
                         arg => {
                             if fn_name.is_none() {
                                 fn_name = Some(arg.to_owned());
@@ -93,15 +70,7 @@ fn main() {
                     }
                 }
                 match (fn_name, fn_args.clone()) {
-                    (Some(name), Some(mut args)) => {
-                        if has_clipboard {
-                            has_param = true;
-                        }
-                        if let Some(param_name) = args.chars().find(|&arg| arg.to_string().starts_with("-p=")).map(|arg| arg.to_string()[3..].to_owned()) {
-                            let _param_decl = format!("[string]${}", param_name);
-                            args = args.chars().filter(|&arg| !arg.to_string().starts_with("-p=")).map(|arg| arg.to_owned()).collect::<String>();
-                            args.insert(0, '$')
-                        }
+                    (Some(name), Some( args)) => {
                         let user_profile = env::var("USERPROFILE").unwrap();
                         let file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
                         let file_content = read_to_string(&file_path).unwrap_or_default();
@@ -118,7 +87,7 @@ fn main() {
                         }
                         let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
             
-                        let function = format!("function {} {{\n    {}{}\n}}\n", name, args, if has_param {" "} else {""});
+                        let function = format!("function {} {{\n    {}{}\n}}\n", name, args,{""});
             
                         file.write_all(function.as_bytes()).unwrap();
             
@@ -132,9 +101,6 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
-            
-
-
             "rm" => {
                 let fn_name = args.get(2);
                 let mods_file_path = std::env::var("USERPROFILE")
@@ -157,7 +123,6 @@ fn main() {
                                 .open(&mods_file_path.replace(".psm1", "_tmp.psm1"))
                                 .unwrap(),
                         );
-            
                         let mut found = false;
                         let mut in_function = false;
                         let mut depth = 0;
