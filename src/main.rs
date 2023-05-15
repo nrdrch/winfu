@@ -417,9 +417,6 @@ fn print_usage(stream: &mut StandardStream) {
     stream.reset().unwrap();
 
 
-
-
-
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
