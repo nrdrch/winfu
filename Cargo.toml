@@ -1,11 +1,12 @@
 [package]
 name = "winfu"
-version = "0.1.6"
+version = "0.1.9"
 edition = "2021"
 description = "Commandline Function Manager For Windows"
 repository = "https://github.com/nrdrch/winfu"
 license = "MIT OR Apache-2.0"
 categories = ["command-line-utilities"]
+build = "build.rs"
 [dependencies]
 termcolor = "1.2.0"
 bat = "0.23.0"
@@ -14,3 +15,4 @@ ansi_term = "0.12.1"
 fs = "0.0.5"
 chrono = "0.4.24"
 regex = "1.7.3"
+clipboard = "0.5.0"

@@ -8,7 +8,8 @@ use std::process::Command;
 extern crate termcolor;
 extern crate bat;
 extern crate chrono;
-
+use clipboard::ClipboardProvider;
+use clipboard::ClipboardContext;
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 fn create_file_if_not_exists() -> std::io::Result<()> {
@@ -26,12 +27,11 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-
+fn get_clipboard_contents() -> String {
+    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
+    ctx.get_contents().unwrap_or_default()
+}
 fn main() {
-    //let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    //let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
-    //let (function_count, line_count, char_count) = count_functions_lines_and_chars(&mods_file_path);
-    //println!("{} contains {} functions, {} lines, and {} characters in total.", mods_file_path, function_count, line_count, char_count);
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
@@ -43,12 +43,23 @@ fn main() {
                 let mut fn_name = None;
                 let mut fn_args = None;
                 let mut has_param = false;
-            
+                let mut has_clipboard = false;
+                
                 // Parse command-line arguments
                 for i in 2..args.len() {
                     match args[i].as_str() {
                         "-p" | "-param" => {
-                            has_param = true;
+                            if i + 1 < args.len() {
+                                has_param = true;
+                                fn_args = Some(args[i+1].to_owned());
+                            } else {
+                                print_usage(&mut stream);
+                                return;
+                            }
+                        }
+                        "-c" | "-clip" => {
+                            has_clipboard = true;
+                            fn_args = Some(get_clipboard_contents());
                         }
                         arg => {
                             if fn_name.is_none() {
@@ -60,16 +71,15 @@ fn main() {
                         }
                     }
                 }
-                
-                match (fn_name, fn_args) {
+                match (fn_name, fn_args.clone()) {
                     (Some(name), Some(mut args)) => {
-                        if has_param {
-                            if !args.starts_with("param") {
-                                args = format!("param([string] $CustomInput)\n    {} $CustomInput", args);
-                            } else {
-                                args = args.replacen("param", "param([string] $CustomInput)", 1);
-                                args = args.replacen("{", "{\n    $CustomInput ", 1);
-                            }
+                        if has_clipboard {
+                            has_param = true;
+                        }
+                        if let Some(param_name) = args.chars().find(|&arg| arg.to_string().starts_with("-p=")).map(|arg| arg.to_string()[3..].to_owned()) {
+                            let param_decl = format!("[string]${}", param_name);
+                            args = args.chars().filter(|&arg| !arg.to_string().starts_with("-p=")).map(|arg| arg.to_owned()).collect::<String>();
+                            args.insert(0, '$')
                         }
                         let user_profile = env::var("USERPROFILE").unwrap();
                         let file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
@@ -101,6 +111,9 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
+            
+
+
             "rm" => {
                 let fn_name = args.get(2);
                 let mods_file_path = std::env::var("USERPROFILE")
@@ -355,8 +368,6 @@ fn main() {
     }
 }
 fn print_usage(stream: &mut StandardStream) {
-    // let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    // let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -406,9 +417,6 @@ fn print_usage(stream: &mut StandardStream) {
     stream.reset().unwrap();
 
 
-
-
-
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
@@ -421,39 +429,13 @@ fn print_usage(stream: &mut StandardStream) {
     write!(stream, "{}", " sv ").unwrap();
     stream.reset().unwrap();
 
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(38))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "<option>").unwrap();
-    stream.reset().unwrap();
 
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
     writeln!(stream, " <name> <args>").unwrap();
     stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(38))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "                      -p").unwrap();
-    stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(231))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, " or ").unwrap();
-    stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(38))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "-param ").unwrap();
-    stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(231))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "= add a string parameter").unwrap();
-
-
-    
+    println!("");
     stream.reset().unwrap();
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
@@ -513,7 +495,7 @@ fn print_usage(stream: &mut StandardStream) {
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::White)).set_bold(true);
     stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "    ").unwrap();
+    // writeln!(stream, "{}", "    ").unwrap();
     writeln!(stream, "{}", "                                            _<").unwrap();
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
