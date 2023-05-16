@@ -36,6 +36,10 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 ```
 winfu sv hi "echo hello world"
 ```
+- Import a complete function from clipboard
+```
+winfu cp
+```
 - Remove the function called "hi"
 ```
 winfu rm hi
