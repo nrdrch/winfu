@@ -1,4 +1,4 @@
-use clipboard_win::{formats, get_clipboard, set_clipboard};
+use clipboard_win::{formats}; //get_clipboard, set_clipboard
 use std::env;
 use std::fs::{OpenOptions};
 use std::io::{Write};
@@ -101,14 +101,16 @@ fn main() {
             }
             "cp" => {
                 let user_profile = env::var("USERPROFILE").unwrap();
-                let file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
-                let file_content = read_to_string(&file_path).unwrap_or_default();
+                let mods_file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
+                let ps_profile_file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
+                let file_content_mods = read_to_string(&mods_file_path).unwrap_or_default();
+                let file_content_ps_profile = read_to_string(&ps_profile_file_path).unwrap_or_default();
                 let newliner = "\n";
                 let clipboard_content: String = clipboard_win::get_clipboard(formats::Unicode).expect("ERROR");
-                let clipboard_trimmed_Start = clipboard_content.trim_start();
-                let clipboard_trimmed_End = clipboard_trimmed_Start.trim_end();
-                if clipboard_trimmed_End.starts_with("function ") && clipboard_trimmed_End.ends_with("\n}") {
-                    if file_content.contains(&clipboard_trimmed_End) {
+                let clipboard_trimmed_start = clipboard_content.trim_start();
+                let clipboard_trimmed_end = clipboard_trimmed_start.trim_end();
+                if clipboard_trimmed_end.starts_with("function ") && clipboard_trimmed_end.ends_with("\n}") {
+                    if file_content_mods.contains(&clipboard_trimmed_end) {
                         writeln!(
                             stream,
                             "{}Function already exists in the mods file",
@@ -117,24 +119,42 @@ fn main() {
                         .unwrap();
                         return;
                     }
-                    let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
+                    let mut file = OpenOptions::new().append(true).open(&mods_file_path).unwrap();
                     file.write_all(&newliner.as_bytes()).unwrap();
-                    file.write_all(&clipboard_trimmed_End.as_bytes()).unwrap();
+                    file.write_all(&clipboard_trimmed_end.as_bytes()).unwrap();
                     writeln!(
                         stream,
                         "\u{001b}[32m[SUCCESS]\u{001b}[0m Function successfully added to mods file",
                     )
                     .unwrap();
+                } else if clipboard_trimmed_end.starts_with("$") {
+                    if file_content_ps_profile.contains(&clipboard_trimmed_end) {
+                        writeln!(
+                            stream,
+                            "{}Variable already exists in the PS Profile file",
+                            ansi_term::Color::Red.bold().paint("[ERROR] "),
+                        )
+                        .unwrap();
+                        return;
+                    }
+                    let mut file = OpenOptions::new().append(true).open(&ps_profile_file_path).unwrap();
+                    file.write_all(&newliner.as_bytes()).unwrap();
+                    file.write_all(&clipboard_trimmed_end.as_bytes()).unwrap();
+                    writeln!(
+                        stream,
+                        "\u{001b}[32m[SUCCESS]\u{001b}[0m Variable successfully added to PS Profile file",
+                    )
+                    .unwrap();
                 } else {
                     writeln!(
                         stream,
-                        "{}Clipboard does not contain a PowerShell function",
+                        "{}Clipboard does not contain a PowerShell variable or function",
                         ansi_term::Color::Red.bold().paint("[ERROR] "),
                     )
                     .unwrap();
                     return;
                 }
-            }
+                
             
                     
             "rm" => {
@@ -264,44 +284,6 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
-            "cpp" => {
-                let user_profile = env::var("USERPROFILE").unwrap();
-                let file_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
-                let file_content = read_to_string(&file_path).unwrap_or_default();
-                let newliner = "\n";
-                let clipboard_content: String = clipboard_win::get_clipboard(formats::Unicode).expect("ERROR");
-                let clipboard_trimmed_Start = clipboard_content.trim_start();
-                let clipboard_trimmed_End = clipboard_trimmed_Start.trim_end();
-                let variable_name = clipboard_trimmed_End.split_whitespace().next().unwrap_or_default();
-                if !variable_name.starts_with("$") {
-                    writeln!(
-                        stream,
-                        "{}Clipboard does not contain a PowerShell variable",
-                        ansi_term::Color::Red.bold().paint("[ERROR] "),
-                    )
-                    .unwrap();
-                    return;
-                }
-                if file_content.contains(&clipboard_trimmed_End) {
-                    writeln!(
-                        stream,
-                        "{}Variable already exists in the mods file",
-                        ansi_term::Color::Red.bold().paint("[ERROR] "),
-                    )
-                    .unwrap();
-                    return;
-                }
-                let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
-                file.write_all(&newliner.as_bytes()).unwrap();
-                file.write_all(&clipboard_trimmed_End.as_bytes()).unwrap();
-                writeln!(
-                    stream,
-                    "\u{001b}[32m[SUCCESS]\u{001b}[0m Variable successfully added to mods file",
-                )
-                .unwrap();
-            }
-            
-            
 
             "rmp" => {
                 if args.len() < 3 {
@@ -433,11 +415,10 @@ fn print_usage(stream: &mut StandardStream) {
     
     let cmd_descs = [
         ("sv", "<name> <args> | save a new function"),
-        ("cp", "              | import complete functions from clipboard"),
         ("rm", "<name>        | remove an existing function"),
         ("ls", "              | list all functions"),
+        ("cp", "              | import complete functions or variables from clipboard"),
         ("svp", "<name> <args> | save a new PowerShell variable"),
-        ("cpp", "              | import complete variables from clipboard"),
         ("rmp", "<name>        | remove an existing PowerShell variable"),
         ("lsp", "              | list all PowerShell variables"),
     ];
