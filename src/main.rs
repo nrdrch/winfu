@@ -154,9 +154,7 @@ fn main() {
                     .unwrap();
                     return;
                 }
-                
-            
-                    
+            }
             "rm" => {
                 let fn_name = args.get(2);
                 let mods_file_path = std::env::var("USERPROFILE")
