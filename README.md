@@ -1,14 +1,24 @@
-## winfu - Commandline Function Manager For Windows! 
-#### Type less and get superior functionality. 
-### Potential Dependencies:
-- [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-- [Git for Windows](https://gitforwindows.org/)
-### Installation:
-- Recommended Method
+# Winfu - Commandline Function Manager For Windows! 
+
+###### **Winfu** aims to significantly reduce the time and effort you spend on<br /> managing PowerShell functions and variables. <br /> While originally inspired by [fish](https://fishshell.com/) on linux and its quick Terminal function creation, <br /> this Utility now has a more complex set of features to  **Save**,  **List**  amd  **Remove** functions or variables<br /> in a intuitive and foolproof way.<br />Implementation of importing complete functions or variables directly from your clipboard, <br />always ensures a way to add complex code without the need for any additional effort.
+
+
+### Installation 
 ```
 cargo install winfu
 ```
-- Alternative Method
+
+<details>
+<summary> 
+more </summary> 
+  
+#### Potential Dependencies:
+- [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
+   
+- [Git for Windows](https://gitforwindows.org/)
+  
+
+#### Alternative Method
 ```
 git clone https://github.com/nrdrch/winfu.git
 ```
@@ -19,50 +29,18 @@ cd winfu
 cargo build --release
 ```
 - Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
-<details>
-<summary>Don't know how to add a directory to your 'Path' system variable? </summary>
-1. Press **Win+R** on your Keyboard and enter this to open the Advanced System Propersties 
-```
-C:\Windows\System32\SystemPropertiesAdvanced.exe
-```
-2. Click **Enviorment Variables** at the bottom.
-3. In the **System variables** box, search for the variable **'Path'**, click on it to mark it and hit **Edit**
-4. To add a directory now, click **New** and enter the **full path** to your executables directory.
+
 </details>
 
-
-### Usage Examples:
-- Save a function called "hi" that will echo "hello world"
-```
-winfu sv hi "echo hello world"
-```
-- Import a complete function or variable from clipboard
-```
-winfu cp
-```
-- Remove the function called "hi"
-```
-winfu rm hi
-```
-- List all your created functions
-```
-winfu ls
-```
-- If your arguments contain a Path with whitespaces for example, format like this:
-```
-winfu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
-```
+------------------
+| **Option**       | **Description**    | **Example**   |
+| :---:        | :---          | :---     |
+| sv          | Save function   | winfu sv hi "echo hello world"         |     
+| rm          | Remove funciton | winfu rm hi        |
+| ls          | List functions | winfu ls     |
+| cp          | Import clipboard   | winfu cp     |
+| svp          | Save variable   | winfu svp docs "C:\Users\Username\Documents\"    |     
+| rmp          | Remove funciton | winfu rmp docs |
+| lsp          | List functions | winfu lsp     |
 ---------
-- Save a variable called docs with the path to documents
-```
-winfu svp docs "C:\Users\Username\Documents\"
-```
 
-- Delete the variable called "docs" 
-```
-winfu rmp docs
-``` 
-- List all variables
-```
-winfu lsp
-```
