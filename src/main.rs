@@ -433,10 +433,11 @@ fn print_usage(stream: &mut StandardStream) {
     
     let cmd_descs = [
         ("sv", "<name> <args> | save a new function"),
-        ("cp", "              | import from clipboard"),
+        ("cp", "              | import complete functions from clipboard"),
         ("rm", "<name>        | remove an existing function"),
         ("ls", "              | list all functions"),
         ("svp", "<name> <args> | save a new PowerShell variable"),
+        ("cpp", "              | import complete variables from clipboard"),
         ("rmp", "<name>        | remove an existing PowerShell variable"),
         ("lsp", "              | list all PowerShell variables"),
     ];
