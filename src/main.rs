@@ -5,11 +5,8 @@ use regex::Regex;
 use std::fs::{self, File, write};
 use std::io::{BufRead, BufReader, BufWriter};
 use std::process::Command;
-extern crate termcolor;
-extern crate bat;
-extern crate chrono;
-use clipboard::ClipboardProvider;
-use clipboard::ClipboardContext;
+//use clipboard::ClipboardProvider;
+//use clipboard::ClipboardContext;
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 fn create_file_if_not_exists() -> std::io::Result<()> {
@@ -27,14 +24,32 @@ fn create_file_if_not_exists() -> std::io::Result<()> {
     }
     Ok(())
 }
-fn get_clipboard_contents() -> String {
-    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-    ctx.get_contents().unwrap_or_default()
-}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
     create_file_if_not_exists().expect("Failed to create file");
+    let output = Command::new("bat")
+        .arg("--version")
+        .output()
+        .ok();
+    if output.is_none() {
+        println!("'bat' is not installed. Installing...");
+        let status = Command::new("cargo")
+            .args(&["install", "bat"])
+            .status();
+
+        match status {
+            Ok(status) => {
+                if !status.success() {
+                    eprintln!("Failed to install 'bat'");
+                }
+            }
+            Err(e) => eprintln!("Failed to run cargo: {}", e),
+        }
+    } else {
+    }
+
     if args.len() == 1 {
         print_usage(&mut stream);
     } else {
@@ -42,25 +57,8 @@ fn main() {
             "sv" => {
                 let mut fn_name = None;
                 let mut fn_args = None;
-                let mut has_param = false;
-                let mut has_clipboard = false;
-                
-                // Parse command-line arguments
                 for i in 2..args.len() {
                     match args[i].as_str() {
-                        "-p" | "-param" => {
-                            if i + 1 < args.len() {
-                                has_param = true;
-                                fn_args = Some(args[i+1].to_owned());
-                            } else {
-                                print_usage(&mut stream);
-                                return;
-                            }
-                        }
-                        "-c" | "-clip" => {
-                            has_clipboard = true;
-                            fn_args = Some(get_clipboard_contents());
-                        }
                         arg => {
                             if fn_name.is_none() {
                                 fn_name = Some(arg.to_owned());
@@ -72,15 +70,7 @@ fn main() {
                     }
                 }
                 match (fn_name, fn_args.clone()) {
-                    (Some(name), Some(mut args)) => {
-                        if has_clipboard {
-                            has_param = true;
-                        }
-                        if let Some(param_name) = args.chars().find(|&arg| arg.to_string().starts_with("-p=")).map(|arg| arg.to_string()[3..].to_owned()) {
-                            let param_decl = format!("[string]${}", param_name);
-                            args = args.chars().filter(|&arg| !arg.to_string().starts_with("-p=")).map(|arg| arg.to_owned()).collect::<String>();
-                            args.insert(0, '$')
-                        }
+                    (Some(name), Some( args)) => {
                         let user_profile = env::var("USERPROFILE").unwrap();
                         let file_path = format!("{}/Documents/WindowsPowerShell/mods.psm1", user_profile);
                         let file_content = read_to_string(&file_path).unwrap_or_default();
@@ -97,7 +87,7 @@ fn main() {
                         }
                         let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
             
-                        let function = format!("function {} {{\n    {}{}\n}}\n", name, args, if has_param {" "} else {""});
+                        let function = format!("function {} {{\n    {}{}\n}}\n", name, args,{""});
             
                         file.write_all(function.as_bytes()).unwrap();
             
@@ -111,9 +101,6 @@ fn main() {
                     _ => print_usage(&mut stream),
                 }
             }
-            
-
-
             "rm" => {
                 let fn_name = args.get(2);
                 let mods_file_path = std::env::var("USERPROFILE")
@@ -136,7 +123,6 @@ fn main() {
                                 .open(&mods_file_path.replace(".psm1", "_tmp.psm1"))
                                 .unwrap(),
                         );
-            
                         let mut found = false;
                         let mut in_function = false;
                         let mut depth = 0;
@@ -368,222 +354,43 @@ fn main() {
     }
 }
 fn print_usage(stream: &mut StandardStream) {
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "").unwrap();
+    let header = ">_Windows Function Manager ";
     
-    writeln!(stream, "{}", "            Windows Function Manager ").unwrap();
-    stream.reset().unwrap();
+    let cmd_descs = [
+        ("sv", "<name> <args> | save a new function"),
+        ("rm", "<name>        | remove an existing function"),
+        ("ls", "              | list all functions"),
+        ("svp", "<name> <args> | save a new PowerShell variable"),
+        ("rmp", "<name>        | remove an existing PowerShell variable"),
+        ("lsp", "              | list all PowerShell variables"),
+    ];
+
+    let footer = "";
 
     let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(36))).set_bold(false);
+    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
-    write!(stream, "{}", "<>").unwrap();
+    writeln!(stream, "\n{}", header).unwrap();
+    stream.reset().unwrap();
+    println!("   ______________________________________________________________");
+    stream.reset().unwrap();
     
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(230))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", " - - - - - - - - - - - - - - - - - - - - - - ").unwrap();
-    
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(36))).set_bold(false);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "<>").unwrap();
-          
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", " >_ ").unwrap();
-    stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(231))).set_bold(false);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "Usage example").unwrap();
-    stream.reset().unwrap();
+    for (cmd, desc) in cmd_descs.iter() {
+        let mut cs = ColorSpec::new();
+        cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
+        stream.set_color(&cs).unwrap();
+        write!(stream, "   {:<4}", cmd).unwrap();
+        stream.reset().unwrap();
 
-    
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", "      sv ").unwrap();
-    stream.reset().unwrap();
-
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "= save a new function").unwrap();
-    stream.reset().unwrap();
-
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
+        let mut cs = ColorSpec::new();
+        cs.set_fg(Some(Color::Ansi256(255))).set_bold(true);
+        stream.set_color(&cs).unwrap();
+        writeln!(stream, "{}", desc).unwrap();
+        stream.reset().unwrap();
+    }
 
     let mut cs = ColorSpec::new();
     cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
     stream.set_color(&cs).unwrap();
-    write!(stream, "{}", " sv ").unwrap();
-    stream.reset().unwrap();
-
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " <name> <args>").unwrap();
-    stream.reset().unwrap();
-    println!("");
-    stream.reset().unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", "      rm ").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "= remove an existing function").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", " rm ").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", "<name>").unwrap();
-    stream.reset().unwrap();
-    println!("");
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "      ls").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "{}", " = list all functions").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " ls").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    // writeln!(stream, "{}", "    ").unwrap();
-    writeln!(stream, "{}", "                                            _<").unwrap();
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", "      svp ").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "= save a new PowerShell variable").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, " svp").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " <name> <args>").unwrap();
-    stream.reset().unwrap();
-
-    println!("");
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "{}", "      rmp ").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, "= remove an existing PowerShell variable").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, " rmp").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " <name>").unwrap();
-    stream.reset().unwrap();
-    println!("");
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "      lsp").unwrap();
-    
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " = list all PowerShell variables").unwrap();
-    
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::White)).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    write!(stream, "              winfu").unwrap();
-    stream.reset().unwrap();
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(42))).set_bold(true);
-    stream.set_color(&cs).unwrap();
-    writeln!(stream, " lsp").unwrap();
-    stream.reset().unwrap();
-
-
-
-    let mut cs = ColorSpec::new();
-    cs.set_fg(Some(Color::Ansi256(243 ))).set_bold(true);
-    stream.set_color(&cs).unwrap();
+    writeln!(stream, "{}", footer).unwrap();
 }
