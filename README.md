@@ -29,5 +29,5 @@ cargo build --release
 | cp          | Import clipboard | winfu cp     |
 | svp          | Save variable   | winfu svp docs "C:\Users\Username\Documents\"    |     
 | rmp          | Remove funciton | winfu rmp docs |
-| lsp          | List functions | winfu lsü     |
+| lsp          | List functions | winfu lsp     |
 ---------
