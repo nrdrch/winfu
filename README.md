@@ -36,6 +36,10 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 ```
 winfu sv hi "echo hello world"
 ```
+- Import a complete function from clipboard
+```
+winfu cp
+```
 - Remove the function called "hi"
 ```
 winfu rm hi
@@ -52,6 +56,10 @@ winfu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
 - Save a variable called docs with the path to documents
 ```
 winfu svp docs "C:\Users\Username\Documents\"
+```
+- Import a complete variable from clipboard
+```
+winfu cp
 ```
 - Delete the variable called "docs" 
 ```
