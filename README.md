@@ -19,8 +19,8 @@ cd winfu
 cargo build --release
 ```
 - Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
-
-### Don't know how to add a directory to your 'Path' system variable?
+<details>
+<summary>Don't know how to add a directory to your 'Path' system variable? </summary>
 1. Press **Win+R** on your Keyboard and enter this to open the Advanced System Propersties 
 ```
 C:\Windows\System32\SystemPropertiesAdvanced.exe
@@ -28,7 +28,7 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 2. Click **Enviorment Variables** at the bottom.
 3. In the **System variables** box, search for the variable **'Path'**, click on it to mark it and hit **Edit**
 4. To add a directory now, click **New** and enter the **full path** to your executables directory.
-
+</details>
 
 
 ### Usage Examples:
@@ -36,7 +36,7 @@ C:\Windows\System32\SystemPropertiesAdvanced.exe
 ```
 winfu sv hi "echo hello world"
 ```
-- Import a complete function from clipboard
+- Import a complete function or variable from clipboard
 ```
 winfu cp
 ```
@@ -57,10 +57,7 @@ winfu sv MoveToPathContainingWhitespaces "cd 'C:\Path With\White Spaces\'"
 ```
 winfu svp docs "C:\Users\Username\Documents\"
 ```
-- Import a complete variable from clipboard
-```
-winfu cpp
-```
+
 - Delete the variable called "docs" 
 ```
 winfu rmp docs
