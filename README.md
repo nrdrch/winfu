@@ -1,26 +1,8 @@
 ## winfu - Commandline Function Manager For Windows! 
-#### Type less and get superior functionality. 
-### Potential Dependencies:
-- [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-- [Git for Windows](https://gitforwindows.org/)
-### Installation:
-- Recommended Method
-```
-cargo install winfu
-```
-- Alternative Method
-```
-git clone https://github.com/nrdrch/winfu.git
-```
-```
-cd winfu
-```
-```
-cargo build --release
-```
-- Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
----------
-## What winfu currently offers
+ 
+
+    
+## How do the winfu 
 | **Option**       | **Description**    | **Example**   |
 | :---:        | :---          | :---     |
 | sv          | Save function   | winfu sv hi "echo hello world"         |     
@@ -31,3 +13,30 @@ cargo build --release
 | rmp          | Remove funciton | winfu rmp docs |
 | lsp          | List functions | winfu lsp     |
 ---------
+
+
+<details>
+<summary> 
+Installation:</summary> 
+  
+### Potential Dependencies:
+:large_blue_diamond: [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
+:large_blue_diamond: [Git for Windows](https://gitforwindows.org/)
+  
+Recommended Method
+```
+cargo install winfu
+```
+:large_blue_diamond: Alternative Method
+```
+git clone https://github.com/nrdrch/winfu.git
+```
+```
+cd winfu
+```
+```
+cargo build --release
+```
+- Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
+
+</details>
