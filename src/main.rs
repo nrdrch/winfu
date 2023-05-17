@@ -105,10 +105,10 @@ fn main() {
                 let file_content = read_to_string(&file_path).unwrap_or_default();
                 let newliner = "\n";
                 let clipboard_content: String = clipboard_win::get_clipboard(formats::Unicode).expect("ERROR");
-                let clipboard_trimmed_Start = clipboard_content.trim_start();
-                let clipboard_trimmed_End = clipboard_trimmed_Start.trim_end();
-                if clipboard_trimmed_End.starts_with("function ") && clipboard_trimmed_End.ends_with("\n}") {
-                    if file_content.contains(&clipboard_trimmed_End) {
+                let clipboard_trimmed_start = clipboard_content.trim_start();
+                let clipboard_trimmed_end = clipboard_trimmed_start.trim_end();
+                if clipboard_trimmed_end.starts_with("function ") && clipboard_trimmed_end.ends_with("\n}") {
+                    if file_content.contains(&clipboard_trimmed_end) {
                         writeln!(
                             stream,
                             "{}Function already exists in the mods file",
@@ -119,7 +119,7 @@ fn main() {
                     }
                     let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
                     file.write_all(&newliner.as_bytes()).unwrap();
-                    file.write_all(&clipboard_trimmed_End.as_bytes()).unwrap();
+                    file.write_all(&clipboard_trimmed_end.as_bytes()).unwrap();
                     writeln!(
                         stream,
                         "\u{001b}[32m[SUCCESS]\u{001b}[0m Function successfully added to mods file",
@@ -270,9 +270,9 @@ fn main() {
                 let file_content = read_to_string(&file_path).unwrap_or_default();
                 let newliner = "\n";
                 let clipboard_content: String = clipboard_win::get_clipboard(formats::Unicode).expect("ERROR");
-                let clipboard_trimmed_Start = clipboard_content.trim_start();
-                let clipboard_trimmed_End = clipboard_trimmed_Start.trim_end();
-                let variable_name = clipboard_trimmed_End.split_whitespace().next().unwrap_or_default();
+                let clipboard_trimmed_start = clipboard_content.trim_start();
+                let clipboard_trimmed_end = clipboard_trimmed_start.trim_end();
+                let variable_name = clipboard_trimmed_end.split_whitespace().next().unwrap_or_default();
                 if !variable_name.starts_with("$") {
                     writeln!(
                         stream,
@@ -282,7 +282,7 @@ fn main() {
                     .unwrap();
                     return;
                 }
-                if file_content.contains(&clipboard_trimmed_End) {
+                if file_content.contains(&clipboard_trimmed_end) {
                     writeln!(
                         stream,
                         "{}Variable already exists in the mods file",
@@ -293,7 +293,7 @@ fn main() {
                 }
                 let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
                 file.write_all(&newliner.as_bytes()).unwrap();
-                file.write_all(&clipboard_trimmed_End.as_bytes()).unwrap();
+                file.write_all(&clipboard_trimmed_end.as_bytes()).unwrap();
                 writeln!(
                     stream,
                     "\u{001b}[32m[SUCCESS]\u{001b}[0m Variable successfully added to mods file",
@@ -433,10 +433,11 @@ fn print_usage(stream: &mut StandardStream) {
     
     let cmd_descs = [
         ("sv", "<name> <args> | save a new function"),
-        ("cp", "              | import from clipboard"),
+        ("cp", "              | import complete functions from clipboard"),
         ("rm", "<name>        | remove an existing function"),
         ("ls", "              | list all functions"),
         ("svp", "<name> <args> | save a new PowerShell variable"),
+        ("cpp", "              | import complete variables from clipboard"),
         ("rmp", "<name>        | remove an existing PowerShell variable"),
         ("lsp", "              | list all PowerShell variables"),
     ];
