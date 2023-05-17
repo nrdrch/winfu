@@ -10,7 +10,7 @@ cargo install winfu
 
 <details>
 <summary> 
-further Installation info:</summary> 
+more </summary> 
   
 #### Potential Dependencies:
 - [Cargo & Rust:](https://doc.rust-lang.org/cargo/getting-started/installation.html)
