@@ -1,4 +1,4 @@
-use clipboard_win::{formats}; //get_clipboard, set_clipboard
+use clipboard_win::{formats}; 
 use std::env;
 use std::fs::{OpenOptions};
 use std::io::{Write};
