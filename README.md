@@ -1,10 +1,9 @@
-### Winfu - Commandline Function Manager For Windows! 
-#### **Winfu** aims to significantly reduce the time and effort you spend on managing PowerShell functions and variables. <br /> While originally inspired by [fish](https://fishshell.com/) on linux and its quick Terminal function creation, <br /> this Utility now has a more complex set of features to  **Save**,  **List**  amd  **Remove** functions or variables in a intuitive and foolproof way.<br />Implementation of importing complete functions or a variables directly from your clipboard, <br />always ensures a way to add complex code without the need for any additional effort.
+# Winfu - Commandline Function Manager For Windows! 
+
+###### **Winfu** aims to significantly reduce the time and effort you spend on<br /> managing PowerShell functions and variables. <br /> While originally inspired by [fish](https://fishshell.com/) on linux and its quick Terminal function creation, <br /> this Utility now has a more complex set of features to  **Save**,  **List**  amd  **Remove** functions or variables<br /> in a intuitive and foolproof way.<br />Implementation of importing complete functions or variables directly from your clipboard, <br />always ensures a way to add complex code without the need for any additional effort.
 
 
-
-------------------
-#### Installation 
+### Installation 
 ```
 cargo install winfu
 ```
@@ -32,7 +31,6 @@ cargo build --release
 - Preferably move the executable from target/release into a directory in your 'Path' enviorment variable for easy execution.
 
 </details>
-
 
 ------------------
 | **Option**       | **Description**    | **Example**   |
