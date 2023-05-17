@@ -1,10 +1,10 @@
 [package]
 name = "winfu"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2021"
 description = "Commandline Function Manager For Windows"
 repository = "https://github.com/nrdrch/winfu"
-license = "MIT OR Apache-2.0"
+license = "WTFPL"
 categories = ["command-line-utilities"]
 [dependencies]
 termcolor = "1.2.0"
