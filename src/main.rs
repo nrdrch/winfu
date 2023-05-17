@@ -105,8 +105,10 @@ fn main() {
                 let file_content = read_to_string(&file_path).unwrap_or_default();
                 let newliner = "\n";
                 let clipboard_content: String = clipboard_win::get_clipboard(formats::Unicode).expect("ERROR");
-                if clipboard_content.starts_with("function ") && clipboard_content.ends_with("\n}") {
-                    if file_content.contains(&clipboard_content) {
+                let clipboard_trimmed_Start = clipboard_content.trim_start();
+                let clipboard_trimmed_End = clipboard_trimmed_Start.trim_end();
+                if clipboard_trimmed_End.starts_with("function ") && clipboard_trimmed_End.ends_with("\n}") {
+                    if file_content.contains(&clipboard_trimmed_End) {
                         writeln!(
                             stream,
                             "{}Function already exists in the mods file",
@@ -117,7 +119,7 @@ fn main() {
                     }
                     let mut file = OpenOptions::new().append(true).open(&file_path).unwrap();
                     file.write_all(&newliner.as_bytes()).unwrap();
-                    file.write_all(&clipboard_content.as_bytes()).unwrap();
+                    file.write_all(&clipboard_trimmed_End.as_bytes()).unwrap();
                     writeln!(
                         stream,
                         "\u{001b}[32m[SUCCESS]\u{001b}[0m Function successfully added to mods file",
