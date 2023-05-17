@@ -314,7 +314,6 @@ fn main() {
                     var_name
                 ).unwrap();
             }
-            
             "lsp" => {
                 let user_profile = env::var("USERPROFILE").unwrap();
                 let profile_path = format!("{}/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1", user_profile);
