@@ -1,32 +1,80 @@
 use clipboard_win::{formats};
 use std::env;
 use std::fs::{OpenOptions};
-use std::io::{Write};
 use regex::Regex;
 use std::fs::{self, File, write};
-use std::io::{BufRead, BufReader, BufWriter};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::process::Command;
 use std::fs::read_to_string;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-fn create_file_if_not_exists() -> std::io::Result<()> {
-    let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
-    let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
-    let profile_file_path = format!("{}\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", home_dir);
-    let profile_file_contents = fs::read_to_string(&profile_file_path)?;
-    if !profile_file_contents.contains(&format!("Import-Module -DisableNameChecking \"{}\"", mods_file_path)) {
-        let mut profile_file = OpenOptions::new().append(true).open(&profile_file_path)?;
-        writeln!(profile_file, "Import-Module -DisableNameChecking \"{}\"", mods_file_path)?;
-    }
-    if !std::path::Path::new(&mods_file_path).exists() {
-        let mut file = File::create(&mods_file_path)?;
-        file.write_all(b"")?;
+use bat::error::Error;
+use std::io::Read;
+fn create_paths_if_not_exists(paths: &[&str]) -> Result<(), Error> {
+    for path in paths {
+        if let Some(parent) = std::path::Path::new(path).parent() {
+            fs::create_dir_all(parent)?;
+        }
+        if !std::path::Path::new(path).exists() {
+            let mut file = File::create(path)?;
+            file.write_all(b"")?; // Write an empty byte sequence to create the file
+        }
     }
     Ok(())
 }
+
+fn check_profile_file(profile_file_path: &str, lines: &[&str]) -> Result<(), Error> {
+    let mut file = File::open(profile_file_path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+
+    let mut file_modified = false;
+    let mut updated_contents = String::new();
+
+    for line in lines {
+        if !contents.contains(line) {
+            file_modified = true;
+            updated_contents.push_str(line);
+            updated_contents.push('\n');
+        }
+    }
+
+    updated_contents.push_str(&contents);
+
+    if file_modified {
+        let mut file = OpenOptions::new().write(true).truncate(true).open(profile_file_path)?;
+        file.write_all(updated_contents.as_bytes())?;
+        println!("Profile file modified: Added missing line(s)");
+    }
+
+    Ok(())
+}
+
+
+
 fn main() {
+    let home_dir = env::var("USERPROFILE").expect("Failed to get home directory path");
+    let mods_file_path = format!("{}\\Documents\\WindowsPowerShell\\mods.psm1", home_dir);
+    let profile_file_path = format!("{}\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1", home_dir);
+
+    let paths = vec![mods_file_path.as_str(), profile_file_path.as_str()];
+
+    create_paths_if_not_exists(&paths)
+        .unwrap_or_else(|err| eprintln!("Failed to create paths: {}", err));
+
+    let lines_to_check = [
+        r#"oh-my-posh init pwsh --config "$HOME\Documents\WindowsPowerShell\ompthemes\custom.omp.yaml" | Invoke-Expression"#,
+        r#"oh-my-posh init pwsh --config "$HOME\Documents\WindowsPowerShell\ompthemes\custom.omp.json" | Invoke-Expression"#,
+    ];
+
+    if let Err(err) = check_profile_file(&profile_file_path, &lines_to_check) {
+        eprintln!("Profile file check failed: {}", err);
+        // Handle the case when the required lines are not found in the file
+    } else {
+        // The file contains the required lines or they were added
+        println!("");
+    }
     let args: Vec<String> = env::args().collect();
     let mut stream = StandardStream::stdout(ColorChoice::Always);
-    create_file_if_not_exists().expect("Failed to create file");
     let output = Command::new("bat")
         .arg("--version")
         .output()
