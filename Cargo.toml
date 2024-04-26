@@ -1,6 +1,6 @@
 [package]
 name = "winfu"
-version = "0.3.3"
+version = "0.3.4"
 edition = "2021"
 description = "Commandline Function Manager For Windows"
 repository = "https://github.com/nrdrch/winfu"
@@ -14,3 +14,4 @@ ansi_term = "0.12.1"
 fs = "0.0.5"
 regex = "1.7.3"
 clipboard-win = "4.5.0"
+winapi = {version = "0.3.9", features = ["std"] }
